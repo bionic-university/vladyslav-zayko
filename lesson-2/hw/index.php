@@ -1,69 +1,91 @@
 <?php
 
+
+interface CalculatorInterface {
+    public  function sum();
+
+    public function minus();
+
+    public function multiply();
+
+    public function divide();
+}
+
 /**
  * Class Calculator
- * @version 1.0
+ * @version 1.1
  * @example php index.php 2 + 5
  */
-class Calculator
+class Calculator implements CalculatorInterface
 {
+    private $arg1;
+    private $arg2;
+    private $expr;
+
+    public function __construct($str) {
+        if(empty($str)) {
+            trigger_error("Empty input", E_USER_ERROR);
+        }
+        list($this->arg1, $this->expr, $this->arg2) = $this->parse($str);
+    }
+
     /**
-     * Calculates the sum of args
-     * @param $arg1
-     * @param $arg2
      * @return mixed
      */
-    static function sum($arg1, $arg2)
+    public function getExpr()
     {
-        self::checkArgs($arg1, $arg2);
-        return $arg1 + $arg2;
+        return $this->expr;
+    }
+
+    /**
+     * Calculates the sum of args
+     * @return mixed
+     */
+    public  function sum()
+    {
+        $this->checkArgs($this->arg1, $this->arg2);
+        return $this->arg1 + $this->arg2;
     }
 
     /**
      * Calculate the difference
-     * @param $arg1
-     * @param $arg2
      * @return mixed
      */
-    static function minus($arg1, $arg2)
+    public function minus()
     {
-        self::checkArgs($arg1, $arg2);
-        return $arg1 - $arg2;
+        $this->checkArgs($this->arg1, $this->arg2);
+        return $this->arg1 - $this->arg2;
     }
 
     /**
      * The calculation of the multiplication
-     * @param $arg1
-     * @param $arg2
      * @return mixed
      */
-    static function multiply($arg1, $arg2)
+    public function multiply()
     {
-        self::checkArgs($arg1, $arg2);
-        return $arg1 * $arg2;
+        $this->checkArgs($this->arg1, $this->arg2);
+        return $this->arg1 * $this->arg2;
     }
 
     /**
      * Calculation of fission
-     * @param $arg1
-     * @param $arg2
      * @return float
      */
-    static function divide($arg1, $arg2)
+    public function divide()
     {
-        self::checkArgs($arg1, $arg2);
+        $this->checkArgs($this->arg1, $this->arg2);
 
-        if ($arg2 == 0) {
+        if ($this->arg2 == 0) {
             trigger_error("You cannot divide to zero", E_USER_ERROR);
         }
-        return $arg1 / $arg2;
+        return $this->arg1 / $this->arg2;
     }
 
     /**
      * @param $arg1
      * @param $arg2
      */
-    static function checkArgs($arg1, $arg2)
+    public function checkArgs($arg1, $arg2)
     {
         if (!is_numeric($arg1) || !is_numeric($arg2)) {
             trigger_error("Arguments should be a number", E_USER_ERROR);
@@ -74,7 +96,7 @@ class Calculator
      * @param $argv
      * @return array
      */
-    static function parse($argv)
+    public function parse($argv)
     {
         $argument1 = (isset($argv[1])) ? $argv[1] : '';
         $argument2 = (isset($argv[2])) ? $argv[2] : '';
@@ -88,23 +110,23 @@ class Calculator
     }
 }
 
-list($num1, $expr, $num2) = Calculator::parse($argv);
+$calculator =  new Calculator($argv);
 
-switch ($expr) {
+switch ($calculator->getExpr()) {
     case '+':
-        $result = Calculator::sum($num1, $num2);
+        $result = $calculator->sum();
         break;
     case '-':
-        $result = Calculator::minus($num1, $num2);
+        $result = $calculator->minus();
         break;
     case '*':
-        $result = Calculator::multiply($num1, $num2);
+        $result = $calculator->multiply();
         break;
     case '/':
-        $result = Calculator::divide($num1, $num2);
+        $result = $calculator->divide();
         break;
     default:
         trigger_error("Unknown expression, example: 2 + 5", E_USER_ERROR);
 }
 
-echo "Result: " . $result;
+echo "\r\nResult: " . $result;
